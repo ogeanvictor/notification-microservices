@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  database:
+    container_name: database-notification
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=notification
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/data/postgres
+
+volumes:
+  pgdata:
+    driver: local
