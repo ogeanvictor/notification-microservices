@@ -64,4 +64,8 @@ export class NotificationRepository implements NotificationRepositoryInterface {
       notifications,
     };
   }
+
+  async findById(id: string): Promise<Notification | null> {
+    return await this.repository.findOne({ where: { id } });
+  }
 }

@@ -13,4 +13,5 @@ export abstract class NotificationRepositoryInterface {
     query: ListQueryDto,
     userId: string,
   ): Promise<NotificationListResponse>;
+  abstract findById(id: string): Promise<Notification | null>;
 }
