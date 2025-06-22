@@ -2,13 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { Notification } from './entities/notification.entity';
 import { NotificationRepositoryInterface } from './interfaces/notification.repository.interface';
+import { Notification } from './entities/notification.entity';
+import { User } from '../user/entities/user.entity';
 
 import { NotificationCreateDto } from './dtos/notification-create.dto';
 import { ListQueryDto } from 'src/common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class NotificationRepository implements NotificationRepositoryInterface {
@@ -22,7 +22,17 @@ export class NotificationRepository implements NotificationRepositoryInterface {
     body: NotificationCreateDto,
     userId: string,
   ): Promise<Notification> {
-    const notification: Notification = this.repository.create(body);
+    const user: User = await this.userRepository.findOneOrFail({
+      where: { id: userId },
+    });
+
+    const notification = new Notification();
+    notification.channel = body.channel;
+    notification.data = body.data;
+    notification.message = body.message;
+    notification.priority = body.priority;
+    notification.recipient = body.recipient;
+    notification.user = user;
 
     await this.repository.save(notification);
 
