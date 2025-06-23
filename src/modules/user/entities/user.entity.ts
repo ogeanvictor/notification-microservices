@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Notification } from 'src/modules/notification/entities/notification.entity';
+import { Brevo } from 'src/modules/brevo/entities/brevo.entity';
 
 @Entity()
 export class User {
@@ -25,6 +27,9 @@ export class User {
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
+
+  @OneToOne(() => Brevo, (brevo) => brevo.user)
+  brevo: Brevo;
 
   @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt: Date;
