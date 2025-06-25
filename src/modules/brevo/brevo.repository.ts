@@ -32,8 +32,8 @@ export class BrevoRepository implements BrevoRepositoryInterface {
     return brevo;
   }
 
-  async findByUser(userId: string): Promise<Brevo> {
-    return await this.repository.findOneOrFail({
+  async findByUser(userId: string): Promise<Brevo | null> {
+    return await this.repository.findOne({
       where: { user: { id: userId } },
     });
   }
