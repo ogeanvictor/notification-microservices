@@ -22,12 +22,15 @@ export class Notification {
   channel: NotificationChannel;
 
   @Column({ type: 'varchar' })
-  recipient: string;
+  recipient: string[];
+
+  @Column({ type: 'varchar', nullable: true })
+  subject: string;
 
   @Column({ type: 'varchar' })
   message: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   data: string;
 
   @Column({ type: 'enum', enum: NotificationPriority })

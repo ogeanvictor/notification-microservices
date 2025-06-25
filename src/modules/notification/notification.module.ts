@@ -12,5 +12,6 @@ import { NotificationRepository } from './notification.repository';
   imports: [TypeOrmModule.forFeature([Notification, User])],
   controllers: [NotificationController],
   providers: [NotificationService, NotificationRepository],
+  exports: [NotificationService],
 })
 export class NotificationModule {}

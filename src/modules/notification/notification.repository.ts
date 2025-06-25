@@ -29,9 +29,12 @@ export class NotificationRepository implements NotificationRepositoryInterface {
     const notification = new Notification();
     notification.channel = body.channel;
     notification.data = body.data;
+    notification.subject = body.subject;
     notification.message = body.message;
     notification.priority = body.priority;
-    notification.recipient = body.recipient;
+    notification.recipient = body.recipients.map(
+      (recipient) => recipient.email,
+    );
     notification.user = user;
 
     await this.repository.save(notification);
