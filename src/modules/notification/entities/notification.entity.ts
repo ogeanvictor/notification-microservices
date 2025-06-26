@@ -11,7 +11,7 @@ import {
 import { NotificationChannel } from './notification-channel.enum';
 import { NotificationPriority } from './notification-priority.enum';
 
-import { User } from 'src/modules/user/entities/user.entity';
+import { User } from '../../../modules/user/entities/user.entity';
 
 @Entity()
 export class Notification {

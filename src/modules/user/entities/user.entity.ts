@@ -8,8 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Notification } from 'src/modules/notification/entities/notification.entity';
-import { Brevo } from 'src/modules/brevo/entities/brevo.entity';
+import { Notification } from '../../../modules/notification/entities/notification.entity';
+import { Brevo } from '../../../modules/brevo/entities/brevo.entity';
 
 @Entity()
 export class User {

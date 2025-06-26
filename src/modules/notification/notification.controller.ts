@@ -3,7 +3,7 @@ import { Request } from 'express';
 
 import { NotificationService } from './notification.service';
 
-import { ListQueryDto } from 'src/common/dtos/list-query.dto';
+import { ListQueryDto } from '../../common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
 import { Notification } from './entities/notification.entity';
 

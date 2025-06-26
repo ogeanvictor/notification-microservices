@@ -3,7 +3,7 @@ import * as BrevoInstance from '@getbrevo/brevo';
 
 import { Brevo } from './entities/brevo.entity';
 import { BrevoRepository } from './brevo.repository';
-import { encrypt, decrypt } from 'src/common/utils/cryptKey';
+import { encrypt, decrypt } from '../../common/utils/cryptKey';
 import { NotificationService } from '../notification/notification.service';
 
 import { BrevoCreateDto } from './dtos/brevo-create.dto';

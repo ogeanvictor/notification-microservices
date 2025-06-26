@@ -1,6 +1,6 @@
 import { Notification } from '../entities/notification.entity';
 
-import { ListQueryDto } from 'src/common/dtos/list-query.dto';
+import { ListQueryDto } from '../../../common/dtos/list-query.dto';
 import { NotificationCreateDto } from '../dtos/notification-create.dto';
 import { NotificationListResponse } from '../dtos/notification-list-response.dto';
 
