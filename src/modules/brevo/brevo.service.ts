@@ -11,21 +11,10 @@ import { NotificationCreateDto } from '../notification/dtos/notification-create.
 
 @Injectable()
 export class BrevoService {
-  private apiInstance: BrevoInstance.TransactionalEmailsApi;
-
   constructor(
     private repository: BrevoRepository,
     private notificationService: NotificationService,
-  ) {
-    this.apiInstance = new BrevoInstance.TransactionalEmailsApi();
-  }
-
-  private configApiKey(apiKey: string): void {
-    this.apiInstance.setApiKey(
-      BrevoInstance.TransactionalEmailsApiApiKeys.apiKey,
-      decrypt(apiKey),
-    );
-  }
+  ) {}
 
   async create(body: BrevoCreateDto, userId: string): Promise<Brevo> {
     try {
@@ -40,6 +29,17 @@ export class BrevoService {
     }
   }
 
+  private buildBrevoInstance(
+    apiKey: string,
+  ): BrevoInstance.TransactionalEmailsApi {
+    const instance = new BrevoInstance.TransactionalEmailsApi();
+    instance.setApiKey(
+      BrevoInstance.TransactionalEmailsApiApiKeys.apiKey,
+      decrypt(apiKey),
+    );
+    return instance;
+  }
+
   async sendEmail(body: NotificationCreateDto, userId: string): Promise<void> {
     try {
       const brevoUserInstance: Brevo | null =
@@ -51,11 +51,11 @@ export class BrevoService {
         );
       }
 
-      const object = this.createEmailObject(body, brevoUserInstance);
-      this.configApiKey(brevoUserInstance.apiKey);
+      const brevoApi = this.buildBrevoInstance(brevoUserInstance.apiKey);
+      const emailObject = this.createEmailObject(body, brevoUserInstance);
 
       await this.notificationService.create(body, userId);
-      await this.apiInstance.sendTransacEmail(object);
+      await brevoApi.sendTransacEmail(emailObject);
     } catch (error: any) {
       throw error;
     }
