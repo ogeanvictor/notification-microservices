@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as BrevoInstance from '@getbrevo/brevo';
 
 import { Brevo } from './entities/brevo.entity';
@@ -13,6 +18,7 @@ import { NotificationCreateDto } from '../notification/dtos/notification-create.
 export class BrevoService {
   constructor(
     private repository: BrevoRepository,
+    @Inject(forwardRef(() => NotificationService))
     private notificationService: NotificationService,
   ) {}
 

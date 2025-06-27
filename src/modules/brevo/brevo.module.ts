@@ -7,11 +7,12 @@ import { User } from '../user/entities/user.entity';
 import { BrevoController } from './brevo.controller';
 import { BrevoService } from './brevo.service';
 import { BrevoRepository } from './brevo.repository';
-import { NotificationModule } from '../notification/notification.module';
+import { NotificationCoreModule } from '../notification/notification.core.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Brevo, User]), NotificationModule],
+  imports: [TypeOrmModule.forFeature([Brevo, User]), NotificationCoreModule],
   controllers: [BrevoController],
   providers: [BrevoService, BrevoRepository],
+  exports: [BrevoService],
 })
 export class BrevoModule {}
