@@ -19,14 +19,4 @@ export class BrevoController {
     const user = req.user as { id: string };
     return await this.service.create(body, user.id);
   }
-
-  @Post('/sendEmail')
-  async sendEmail(
-    @Body() body: NotificationCreateDto,
-    @Req() req: Request,
-  ): Promise<string> {
-    const user = req.user as { id: string };
-    await this.service.sendEmail(body, user.id);
-    return 'Email sent!';
-  }
 }
