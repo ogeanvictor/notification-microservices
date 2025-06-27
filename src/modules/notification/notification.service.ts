@@ -1,4 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
 
 import { NotificationRepository } from './notification.repository';
 import { Notification } from './entities/notification.entity';
@@ -9,7 +14,27 @@ import { NotificationListResponse } from './dtos/notification-list-response.dto'
 
 @Injectable()
 export class NotificationService {
-  constructor(private repository: NotificationRepository) {}
+  private client: ClientProxy;
+
+  constructor(private repository: NotificationRepository) {
+    this.client = ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://localhost:5672'],
+        queue: 'notifications_queue',
+        queueOptions: {
+          durable: true,
+        },
+      },
+    });
+  }
+
+  async publishNotification(
+    notification: NotificationCreateDto,
+    userId: string,
+  ) {
+    this.client.emit('send_email', { notification, userId });
+  }
 
   async create(
     body: NotificationCreateDto,
