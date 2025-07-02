@@ -17,9 +17,8 @@ async function bootstrap() {
       queue: 'notifications_queue',
       queueOptions: {
         durable: true,
-        deadLetterExchange: '',
-        deadLetterRoutingKey: 'notification_dead_letter',
       },
+      noAck: false,
     },
   });
 
