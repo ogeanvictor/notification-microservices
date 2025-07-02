@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   ClientProxy,
   ClientProxyFactory,
@@ -15,6 +15,7 @@ import { NotificationListResponse } from './dtos/notification-list-response.dto'
 @Injectable()
 export class NotificationService {
   private client: ClientProxy;
+  private readonly logger = new Logger(NotificationService.name);
 
   constructor(private repository: NotificationRepository) {
     this.client = ClientProxyFactory.create({
@@ -34,6 +35,7 @@ export class NotificationService {
     userId: string,
   ) {
     this.client.emit('send_email', { notification, userId });
+    this.logger.log('Email publish!');
   }
 
   async create(
