@@ -1,5 +1,6 @@
 import { Controller, forwardRef, Inject, Logger } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { setTimeout as delay } from 'timers/promises';
 
 import { BrevoService } from 'src/modules/brevo/brevo.service';
 
@@ -22,6 +23,9 @@ export class NotificationWorker {
     const originalMsg = context.getMessage();
     try {
       const { notification, userId } = data;
+
+      await delay(3000);
+      this.logger.log(`Notification priority: ${notification.priority}`);
       await this.brevoService.sendEmail(notification, userId);
 
       channel.ack(originalMsg);

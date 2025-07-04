@@ -4,6 +4,7 @@ import {
   ClientProxyFactory,
   Transport,
 } from '@nestjs/microservices';
+import * as amqp from 'amqplib';
 
 import { NotificationRepository } from './notification.repository';
 import { Notification } from './entities/notification.entity';
@@ -25,6 +26,9 @@ export class NotificationService {
         queue: 'notifications_queue',
         queueOptions: {
           durable: true,
+          arguments: {
+            'x-max-priority': 10,
+          },
         },
       },
     });
@@ -34,7 +38,36 @@ export class NotificationService {
     notification: NotificationCreateDto,
     userId: string,
   ) {
-    this.client.emit('send_email', { notification, userId });
+    const amqpUrl = 'amqp://localhost';
+    const exchange = 'notifications_exchange';
+    const routingKey = 'send_email';
+
+    const connection = await amqp.connect(amqpUrl);
+    const channel = await connection.createChannel();
+
+    const payload = {
+      pattern: 'send_email',
+      data: { notification, userId },
+    };
+
+    await channel.assertExchange(exchange, 'direct', { durable: true });
+
+    const priorityNumber = this.mapPriority(notification.priority);
+
+    channel.publish(
+      exchange,
+      routingKey,
+      Buffer.from(JSON.stringify(payload)),
+      {
+        priority: priorityNumber,
+        persistent: true,
+        headers: { pattern: 'send_email' },
+      },
+    );
+
+    await channel.close();
+    await connection.close();
+
     this.logger.log('Email publish!');
   }
 
@@ -65,6 +98,19 @@ export class NotificationService {
       return await this.repository.findById(id);
     } catch (error: any) {
       throw new NotFoundException('Notification not found!');
+    }
+  }
+
+  private mapPriority(priority: 'low' | 'medium' | 'high'): number {
+    switch (priority) {
+      case 'high':
+        return 10;
+      case 'medium':
+        return 5;
+      case 'low':
+        return 1;
+      default:
+        return 0;
     }
   }
 }

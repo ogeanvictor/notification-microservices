@@ -15,8 +15,12 @@ async function bootstrap() {
     options: {
       urls: ['amqp://localhost:5672'],
       queue: 'notifications_queue',
+      prefetchCount: 1,
       queueOptions: {
         durable: true,
+        arguments: {
+          'x-max-priority': 10,
+        },
       },
       noAck: false,
     },
