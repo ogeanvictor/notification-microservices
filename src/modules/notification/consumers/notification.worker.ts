@@ -32,8 +32,8 @@ export class NotificationWorker {
 
       this.logger.log('Email send!');
     } catch (error: any) {
-      this.logger.log(`Send notification error: ${error}`);
-      channel.nack(originalMsg, false, true);
+      channel.nack(originalMsg, false, false);
+      this.logger.log(`Send notification error to dlq: ${error}`);
     }
   }
 }

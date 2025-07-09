@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { BrevoModule } from './modules/brevo/brevo.module';
 import { NotificationCoreModule } from './modules/notification/notification.core.module';
+import { QueueSetupModule } from './modules/queue/queue.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { NotificationCoreModule } from './modules/notification/notification.core
     NotificationModule,
     NotificationCoreModule,
     BrevoModule,
+    QueueSetupModule,
   ],
   controllers: [],
   providers: [],
