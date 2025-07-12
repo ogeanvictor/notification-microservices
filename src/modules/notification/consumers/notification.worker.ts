@@ -4,7 +4,7 @@ import { setTimeout as delay } from 'timers/promises';
 
 import { BrevoService } from 'src/modules/brevo/brevo.service';
 
-import { NotificationQueueDto } from '../dtos/notification-queue.dto';
+import { NotificationEmailQueueDto } from '../dtos/notification-email-queue.dto';
 
 @Controller()
 export class NotificationWorker {
@@ -16,7 +16,7 @@ export class NotificationWorker {
 
   @EventPattern('send_email')
   async handleSendEmail(
-    @Payload() data: NotificationQueueDto,
+    @Payload() data: NotificationEmailQueueDto,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();

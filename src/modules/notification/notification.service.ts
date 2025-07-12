@@ -12,6 +12,7 @@ import { Notification } from './entities/notification.entity';
 import { NotificationCreateDto } from './dtos/notification-create.dto';
 import { ListQueryDto } from '../../common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
+import { BrevoSmsDto } from '../brevo/dtos/brevo-sms.dto';
 
 @Injectable()
 export class NotificationService {
@@ -72,7 +73,7 @@ export class NotificationService {
   }
 
   async create(
-    body: NotificationCreateDto,
+    body: NotificationCreateDto | BrevoSmsDto,
     userId: string,
   ): Promise<Notification> {
     try {

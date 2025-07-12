@@ -3,11 +3,6 @@ import { IsArray, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { NotificationChannel } from '../entities/notification-channel.enum';
 import { NotificationPriority } from '../entities/notification-priority.enum';
 
-interface Recipient {
-  name: string;
-  email: string;
-}
-
 export class NotificationCreateDto {
   @IsNotEmpty()
   @IsEnum(NotificationChannel)
@@ -15,7 +10,7 @@ export class NotificationCreateDto {
 
   @IsNotEmpty()
   @IsArray()
-  recipients: Recipient[];
+  recipients: string[];
 
   @IsOptional()
   subject: string;
