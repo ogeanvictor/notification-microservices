@@ -12,12 +12,16 @@ import { encrypt, decrypt } from '../../common/utils/cryptKey';
 import { NotificationService } from '../notification/notification.service';
 
 import { BrevoCreateDto } from './dtos/brevo-create.dto';
-import { NotificationCreateDto } from '../notification/dtos/notification-create.dto';
+import { BrevoSmsDto } from './dtos/brevo-sms.dto';
+import { User } from '../user/entities/user.entity';
+import { UserRepository } from '../user/user.repository';
+import { BrevoEmailDto } from './dtos/brevo-email.dto';
 
 @Injectable()
 export class BrevoService {
   constructor(
     private repository: BrevoRepository,
+    private userRepository: UserRepository,
     @Inject(forwardRef(() => NotificationService))
     private notificationService: NotificationService,
   ) {}
@@ -35,7 +39,7 @@ export class BrevoService {
     }
   }
 
-  private buildBrevoInstance(
+  private buildBrevoEmailInstance(
     apiKey: string,
   ): BrevoInstance.TransactionalEmailsApi {
     const instance = new BrevoInstance.TransactionalEmailsApi();
@@ -46,7 +50,18 @@ export class BrevoService {
     return instance;
   }
 
-  async sendEmail(body: NotificationCreateDto, userId: string): Promise<void> {
+  private buildBrevoSmsInstance(
+    apiKey: string,
+  ): BrevoInstance.TransactionalSMSApi {
+    const instance = new BrevoInstance.TransactionalSMSApi();
+    instance.setApiKey(
+      BrevoInstance.TransactionalSMSApiApiKeys.apiKey,
+      decrypt(apiKey),
+    );
+    return instance;
+  }
+
+  async sendEmail(body: BrevoEmailDto, userId: string): Promise<void> {
     try {
       const brevoUserInstance: Brevo | null =
         await this.repository.findByUser(userId);
@@ -57,18 +72,47 @@ export class BrevoService {
         );
       }
 
-      const brevoApi = this.buildBrevoInstance(brevoUserInstance.apiKey);
+      const brevoApi = this.buildBrevoEmailInstance(brevoUserInstance.apiKey);
       const emailObject = this.createEmailObject(body, brevoUserInstance);
 
-      await this.notificationService.create(body, userId);
+      await this.notificationService.create(
+        {
+          ...body,
+          recipients: body.recipients.map((recipient) => recipient.email),
+        },
+        userId,
+      );
       await brevoApi.sendTransacEmail(emailObject);
     } catch (error: any) {
       throw error;
     }
   }
 
+  async sendSms(body: BrevoSmsDto, userId: string): Promise<void> {
+    try {
+      const brevoUserInstance: Brevo | null =
+        await this.repository.findByUser(userId);
+
+      const user: User | null = await this.userRepository.findById(userId);
+
+      if (!brevoUserInstance) {
+        throw new NotFoundException(
+          'Brevo account for this user is not found, please create a account!',
+        );
+      }
+
+      const brevoApi = this.buildBrevoSmsInstance(brevoUserInstance.apiKey);
+      const smsObject = this.createSmsObject(body, user);
+
+      await this.notificationService.create(body, userId);
+      await brevoApi.sendTransacSms(smsObject);
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
   private createEmailObject(
-    body: NotificationCreateDto,
+    body: BrevoEmailDto,
     brevo: Brevo,
   ): BrevoInstance.SendSmtpEmail {
     const emailObject = new BrevoInstance.SendSmtpEmail();
@@ -79,6 +123,18 @@ export class BrevoService {
     };
     emailObject.to = body.recipients;
     emailObject.htmlContent = body.message;
+
+    return emailObject;
+  }
+
+  private createSmsObject(
+    body: BrevoSmsDto,
+    user: User,
+  ): BrevoInstance.SendTransacSms {
+    const emailObject = new BrevoInstance.SendTransacSms();
+    emailObject.recipient = body.recipients[0];
+    emailObject.sender = user.name;
+    emailObject.content = body.message;
 
     return emailObject;
   }

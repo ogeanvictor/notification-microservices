@@ -5,7 +5,6 @@ import { Brevo } from './entities/brevo.entity';
 import { BrevoService } from './brevo.service';
 
 import { BrevoCreateDto } from './dtos/brevo-create.dto';
-import { NotificationCreateDto } from '../notification/dtos/notification-create.dto';
 
 @Controller('brevo')
 export class BrevoController {
