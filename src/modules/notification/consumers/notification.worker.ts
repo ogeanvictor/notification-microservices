@@ -5,6 +5,7 @@ import { setTimeout as delay } from 'timers/promises';
 import { BrevoService } from 'src/modules/brevo/brevo.service';
 
 import { NotificationEmailQueueDto } from '../dtos/notification-email-queue.dto';
+import { NotificationSmsQueueDto } from '../dtos/notification-sms-queue.dto';
 
 @Controller()
 export class NotificationWorker {
@@ -21,6 +22,7 @@ export class NotificationWorker {
   ) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
+
     try {
       const { notification, userId } = data;
 
@@ -33,7 +35,31 @@ export class NotificationWorker {
       this.logger.log('Email send!');
     } catch (error: any) {
       channel.nack(originalMsg, false, false);
-      this.logger.log(`Send notification error to dlq: ${error}`);
+      this.logger.log(`Send email notification error to dlq: ${error}`);
+    }
+  }
+
+  @EventPattern('send_sms')
+  async handleSendSms(
+    @Payload() data: NotificationSmsQueueDto,
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+
+    try {
+      const { notification, userId } = data;
+
+      await delay(3000);
+      this.logger.log(`Notification priority: ${notification.priority}`);
+      await this.brevoService.sendSms(notification, userId);
+
+      channel.ack(originalMsg);
+
+      this.logger.log('Sms send!');
+    } catch (error: any) {
+      channel.nack(originalMsg, false, false);
+      this.logger.log(`Send sms notification error to dlq: ${error}`);
     }
   }
 }

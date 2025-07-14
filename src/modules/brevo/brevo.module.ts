@@ -8,9 +8,14 @@ import { BrevoController } from './brevo.controller';
 import { BrevoService } from './brevo.service';
 import { BrevoRepository } from './brevo.repository';
 import { NotificationCoreModule } from '../notification/notification.core.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Brevo, User]), NotificationCoreModule],
+  imports: [
+    TypeOrmModule.forFeature([Brevo, User]),
+    NotificationCoreModule,
+    UserModule,
+  ],
   controllers: [BrevoController],
   providers: [BrevoService, BrevoRepository],
   exports: [BrevoService],

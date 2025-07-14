@@ -6,7 +6,9 @@ import { NotificationService } from './notification.service';
 import { ListQueryDto } from '../../common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
 import { Notification } from './entities/notification.entity';
-import { NotificationCreateDto } from './dtos/notification-create.dto';
+
+import { BrevoEmailDto } from '../brevo/dtos/brevo-email.dto';
+import { BrevoSmsDto } from '../brevo/dtos/brevo-sms.dto';
 
 @Controller('notifications')
 export class NotificationController {
@@ -28,11 +30,21 @@ export class NotificationController {
 
   @Post('/sendEmail')
   async sendEmail(
-    @Body() body: NotificationCreateDto,
+    @Body() body: BrevoEmailDto,
     @Req() req: Request,
   ): Promise<string> {
     const user = req.user as { id: string };
-    await this.service.publishNotification(body, user.id);
-    return 'Notification queued!';
+    await this.service.publishNotification('send_email', body, user.id);
+    return 'Email notification queued!';
+  }
+
+  @Post('/sendSms')
+  async sendSms(
+    @Body() body: BrevoSmsDto,
+    @Req() req: Request,
+  ): Promise<string> {
+    const user = req.user as { id: string };
+    await this.service.publishNotification('send_sms', body, user.id);
+    return 'Sms notification queued!';
   }
 }
