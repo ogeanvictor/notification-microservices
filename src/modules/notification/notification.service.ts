@@ -13,6 +13,7 @@ import { NotificationCreateDto } from './dtos/notification-create.dto';
 import { ListQueryDto } from '../../common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
 import { BrevoSmsDto } from '../brevo/dtos/brevo-sms.dto';
+import { BrevoEmailDto } from '../brevo/dtos/brevo-email.dto';
 
 @Injectable()
 export class NotificationService {
@@ -36,18 +37,18 @@ export class NotificationService {
   }
 
   async publishNotification(
-    notification: NotificationCreateDto,
+    routingKey: string,
+    notification: BrevoEmailDto | BrevoSmsDto,
     userId: string,
   ) {
     const amqpUrl = 'amqp://localhost';
     const exchange = 'notifications_exchange';
-    const routingKey = 'send_email';
 
     const connection = await amqp.connect(amqpUrl);
     const channel = await connection.createChannel();
 
     const payload = {
-      pattern: 'send_email',
+      pattern: routingKey,
       data: { notification, userId },
     };
 
@@ -62,14 +63,14 @@ export class NotificationService {
       {
         priority: priorityNumber,
         persistent: true,
-        headers: { pattern: 'send_email' },
+        headers: { pattern: routingKey },
       },
     );
 
     await channel.close();
     await connection.close();
 
-    this.logger.log('Email publish!');
+    this.logger.log('Notification publish!');
   }
 
   async create(
