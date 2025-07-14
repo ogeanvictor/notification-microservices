@@ -32,9 +32,7 @@ export class NotificationRepository implements NotificationRepositoryInterface {
     notification.subject = body.subject;
     notification.message = body.message;
     notification.priority = body.priority;
-    notification.recipient = body.recipients.map(
-      (recipient) => recipient.email,
-    );
+    notification.recipient = body.recipients;
     notification.user = user;
 
     await this.repository.save(notification);
