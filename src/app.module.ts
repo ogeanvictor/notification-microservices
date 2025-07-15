@@ -6,6 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { BrevoModule } from './modules/brevo/brevo.module';
+import { FacebookModule } from './modules/facebook/facebook.module';
 import { NotificationCoreModule } from './modules/notification/notification.core.module';
 import { QueueSetupModule } from './modules/queue/queue.module';
 
@@ -20,6 +21,7 @@ import { QueueSetupModule } from './modules/queue/queue.module';
     NotificationModule,
     NotificationCoreModule,
     BrevoModule,
+    FacebookModule,
     QueueSetupModule,
   ],
   controllers: [],
