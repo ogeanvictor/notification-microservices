@@ -37,12 +37,12 @@ export class NotificationService {
   }
 
   async publishNotification(
-    routingKey: string,
     notification: BrevoEmailDto | BrevoSmsDto,
     userId: string,
   ) {
     const amqpUrl = 'amqp://localhost';
     const exchange = 'notifications_exchange';
+    const routingKey = 'send_notification';
 
     const connection = await amqp.connect(amqpUrl);
     const channel = await connection.createChannel();

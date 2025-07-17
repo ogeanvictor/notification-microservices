@@ -34,7 +34,7 @@ export class NotificationController {
     @Req() req: Request,
   ): Promise<string> {
     const user = req.user as { id: string };
-    await this.service.publishNotification('send_email', body, user.id);
+    await this.service.publishNotification(body, user.id);
     return 'Email notification queued!';
   }
 
@@ -44,7 +44,7 @@ export class NotificationController {
     @Req() req: Request,
   ): Promise<string> {
     const user = req.user as { id: string };
-    await this.service.publishNotification('send_sms', body, user.id);
+    await this.service.publishNotification(body, user.id);
     return 'Sms notification queued!';
   }
 }

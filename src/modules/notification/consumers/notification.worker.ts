@@ -4,8 +4,8 @@ import { setTimeout as delay } from 'timers/promises';
 
 import { BrevoService } from 'src/modules/brevo/brevo.service';
 
-import { NotificationEmailQueueDto } from '../dtos/notification-email-queue.dto';
-import { NotificationSmsQueueDto } from '../dtos/notification-sms-queue.dto';
+import { NotificationPayloadDto } from '../dtos/notification-payload.dto';
+import { NotificationStrategyFactory } from '../notification.strategy.factory';
 
 @Controller()
 export class NotificationWorker {
@@ -13,11 +13,12 @@ export class NotificationWorker {
 
   constructor(
     @Inject(forwardRef(() => BrevoService)) private brevoService: BrevoService,
+    private notificationStrategyFactory: NotificationStrategyFactory,
   ) {}
 
-  @EventPattern('send_email')
+  @EventPattern('send_notification')
   async handleSendEmail(
-    @Payload() data: NotificationEmailQueueDto,
+    @Payload() data: NotificationPayloadDto,
     @Ctx() context: RmqContext,
   ) {
     const channel = context.getChannelRef();
@@ -28,38 +29,18 @@ export class NotificationWorker {
 
       await delay(3000);
       this.logger.log(`Notification priority: ${notification.priority}`);
-      await this.brevoService.sendEmail(notification, userId);
+
+      const strategy = this.notificationStrategyFactory.getStrategy(
+        notification.channel,
+      );
+      await strategy.send(notification, userId);
 
       channel.ack(originalMsg);
 
-      this.logger.log('Email send!');
+      this.logger.log('Notification send!');
     } catch (error: any) {
       channel.nack(originalMsg, false, false);
-      this.logger.log(`Send email notification error to dlq: ${error}`);
-    }
-  }
-
-  @EventPattern('send_sms')
-  async handleSendSms(
-    @Payload() data: NotificationSmsQueueDto,
-    @Ctx() context: RmqContext,
-  ) {
-    const channel = context.getChannelRef();
-    const originalMsg = context.getMessage();
-
-    try {
-      const { notification, userId } = data;
-
-      await delay(3000);
-      this.logger.log(`Notification priority: ${notification.priority}`);
-      await this.brevoService.sendSms(notification, userId);
-
-      channel.ack(originalMsg);
-
-      this.logger.log('Sms send!');
-    } catch (error: any) {
-      channel.nack(originalMsg, false, false);
-      this.logger.log(`Send sms notification error to dlq: ${error}`);
+      this.logger.log(`Send notification error to dlq: ${error}`);
     }
   }
 }
