@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { Controller, forwardRef, Inject, Logger } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { setTimeout as delay } from 'timers/promises';
@@ -21,12 +24,16 @@ export class NotificationWorker {
     @Payload() data: NotificationPayloadDto,
     @Ctx() context: RmqContext,
   ) {
-    const channel = context.getChannelRef();
-    const originalMsg = context.getMessage();
+    const channel = context.getChannelRef() as {
+      ack: (msg: unknown) => void;
+      nack: (msg: unknown, allUpTo?: boolean, requeue?: boolean) => void;
+    };
+
+    const originalMsg = context.getMessage() as unknown;
+
+    const { notification, userId } = data;
 
     try {
-      const { notification, userId } = data;
-
       await delay(3000);
       this.logger.log(`Notification priority: ${notification.priority}`);
 

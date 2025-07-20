@@ -13,10 +13,10 @@ export class NotificationStrategyFactory {
 
   getStrategy(channel: NotificationChannel): NotificationStrategyInterface {
     switch (channel) {
-      case 'email':
+      case NotificationChannel.EMAIL:
         return this.emailStrategy;
 
-      case 'sms':
+      case NotificationChannel.SMS:
         return this.smsStrategy;
 
       default:
