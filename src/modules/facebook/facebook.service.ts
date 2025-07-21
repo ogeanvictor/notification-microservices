@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 import { Facebook } from './entities/facebook.entity';
 
 import { FacebookRepository } from './facebook.repository';
-import { encrypt } from 'src/common/utils/cryptKey';
+import { decrypt, encrypt } from 'src/common/utils/cryptKey';
 
 import { FacebookCreateDto } from './dtos/facebook-create.dto';
+import { FacebookTemplatesDto } from './dtos/facebook-templates.dto';
 
 @Injectable()
 export class FacebookService {
-  constructor(private repository: FacebookRepository) {}
+  constructor(
+    private repository: FacebookRepository,
+    private readonly httpService: HttpService,
+  ) {}
 
   async create(body: FacebookCreateDto, userId: string): Promise<Facebook> {
     try {
@@ -19,6 +25,29 @@ export class FacebookService {
         userId,
       );
       return facebook;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async getTemplates(userId: string): Promise<FacebookTemplatesDto> {
+    try {
+      const facebook: Facebook = await this.repository.findByUser(userId);
+
+      const decryptToken = decrypt(facebook.token);
+
+      const response = await firstValueFrom(
+        this.httpService.get<FacebookTemplatesDto>(
+          `https://graph.facebook.com/v22.0/${facebook.businessPhone}/message_templates`,
+          {
+            headers: {
+              Authorization: `Bearer ${decryptToken}`,
+            },
+          },
+        ),
+      );
+
+      return response.data;
     } catch (error: any) {
       throw error;
     }
