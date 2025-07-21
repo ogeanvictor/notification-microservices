@@ -30,4 +30,8 @@ export class FacebookRepository implements FacebookRepositoryInterface {
 
     return facebook;
   }
+
+  async findByUser(userId: string): Promise<Facebook> {
+    return await this.repository.findOneByOrFail({ user: { id: userId } });
+  }
 }
