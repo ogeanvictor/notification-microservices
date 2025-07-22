@@ -6,6 +6,7 @@ import { NotificationService } from './notification.service';
 import { ListQueryDto } from '../../common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
 import { Notification } from './entities/notification.entity';
+import { NotificationChannel } from './entities/notification-channel.enum';
 
 import { BrevoEmailDto } from '../brevo/dtos/brevo-email.dto';
 import { BrevoSmsDto } from '../brevo/dtos/brevo-sms.dto';
@@ -35,7 +36,11 @@ export class NotificationController {
     @Req() req: Request,
   ): Promise<string> {
     const user = req.user as { id: string };
-    await this.service.publishNotification(body, user.id);
+    await this.service.publishNotification(
+      NotificationChannel.EMAIL,
+      body,
+      user.id,
+    );
     return 'Email notification queued!';
   }
 
@@ -45,7 +50,11 @@ export class NotificationController {
     @Req() req: Request,
   ): Promise<string> {
     const user = req.user as { id: string };
-    await this.service.publishNotification(body, user.id);
+    await this.service.publishNotification(
+      NotificationChannel.SMS,
+      body,
+      user.id,
+    );
     return 'Sms notification queued!';
   }
 
@@ -55,7 +64,11 @@ export class NotificationController {
     @Req() req: Request,
   ): Promise<string> {
     const user = req.user as { id: string };
-    await this.service.publishNotification(body, user.id);
+    await this.service.publishNotification(
+      NotificationChannel.WPP,
+      body,
+      user.id,
+    );
     return 'Wpp notification queued!';
   }
 }

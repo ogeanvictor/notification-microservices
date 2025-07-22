@@ -8,6 +8,7 @@ import * as amqp from 'amqplib';
 
 import { NotificationRepository } from './notification.repository';
 import { Notification } from './entities/notification.entity';
+import { NotificationChannel } from './entities/notification-channel.enum';
 
 import { NotificationCreateDto } from './dtos/notification-create.dto';
 import { ListQueryDto } from '../../common/dtos/list-query.dto';
@@ -38,6 +39,7 @@ export class NotificationService {
   }
 
   async publishNotification(
+    channelType: NotificationChannel,
     notification: BrevoEmailDto | BrevoSmsDto | WppTemplateDto,
     userId: string,
   ) {
@@ -50,7 +52,7 @@ export class NotificationService {
 
     const payload = {
       pattern: routingKey,
-      data: { notification, userId },
+      data: { channelType, notification, userId },
     };
 
     await channel.assertExchange(exchange, 'direct', { durable: true });

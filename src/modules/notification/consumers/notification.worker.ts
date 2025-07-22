@@ -31,15 +31,14 @@ export class NotificationWorker {
 
     const originalMsg = context.getMessage() as unknown;
 
-    const { notification, userId } = data;
+    const { channelType, notification, userId } = data;
 
     try {
       await delay(3000);
       this.logger.log(`Notification priority: ${notification.priority}`);
 
-      const strategy = this.notificationStrategyFactory.getStrategy(
-        notification.channel,
-      );
+      const strategy =
+        this.notificationStrategyFactory.getStrategy(channelType);
       await strategy.send(notification, userId);
 
       channel.ack(originalMsg);
