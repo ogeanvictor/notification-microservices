@@ -6,15 +6,18 @@ import { NotificationCoreModule } from './notification.core.module';
 import { NotificationStrategyFactory } from './notification.strategy.factory';
 import { NotificationEmailStrategy } from './strategys/notification.email.strategy';
 import { NotificationSmsStrategy } from './strategys/notification.sms.strategy';
+import { NotificationWppStrategy } from './strategys/notification.wpp.strategy';
 import { BrevoModule } from '../brevo/brevo.module';
+import { WppModule } from '../wpp/wpp.module';
 
 @Module({
-  imports: [NotificationCoreModule, BrevoModule],
+  imports: [NotificationCoreModule, BrevoModule, WppModule],
   controllers: [NotificationController, NotificationWorker],
   providers: [
     NotificationStrategyFactory,
     NotificationEmailStrategy,
     NotificationSmsStrategy,
+    NotificationWppStrategy,
   ],
   exports: [],
 })

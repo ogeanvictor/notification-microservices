@@ -18,5 +18,6 @@ import { NotificationCoreModule } from '../notification/notification.core.module
   ],
   controllers: [WppController],
   providers: [WppService, WppRepository],
+  exports: [WppService],
 })
 export class WppModule {}
