@@ -22,7 +22,7 @@ export class Paging {
   };
 }
 
-export class FacebookTemplatesDto {
+export class WppTemplatesResponseDto {
   data: TemplateItem[];
   paging: Paging;
 }

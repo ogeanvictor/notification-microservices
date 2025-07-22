@@ -14,7 +14,7 @@ import { ListQueryDto } from '../../common/dtos/list-query.dto';
 import { NotificationListResponse } from './dtos/notification-list-response.dto';
 import { BrevoSmsDto } from '../brevo/dtos/brevo-sms.dto';
 import { BrevoEmailDto } from '../brevo/dtos/brevo-email.dto';
-import { FacebookWppDto } from '../facebook/dtos/facebook-wpp.dto';
+import { WppTemplateDto } from '../wpp/dtos/wpp-template.dto';
 
 @Injectable()
 export class NotificationService {
@@ -38,7 +38,7 @@ export class NotificationService {
   }
 
   async publishNotification(
-    notification: BrevoEmailDto | BrevoSmsDto | FacebookWppDto,
+    notification: BrevoEmailDto | BrevoSmsDto | WppTemplateDto,
     userId: string,
   ) {
     const amqpUrl = 'amqp://localhost';

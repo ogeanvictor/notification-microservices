@@ -2,52 +2,52 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
-import { Facebook } from './entities/facebook.entity';
+import { Wpp } from './entities/Wpp.entity';
 
-import { FacebookRepository } from './facebook.repository';
+import { WppRepository } from './wpp.repository';
+import { NotificationService } from '../notification/notification.service';
 import { decrypt, encrypt } from 'src/common/utils/cryptKey';
 
-import { FacebookCreateDto } from './dtos/facebook-create.dto';
-import { FacebookTemplatesDto } from './dtos/facebook-templates.dto';
-import { FacebookWppDto } from './dtos/facebook-wpp.dto';
-import { NotificationService } from '../notification/notification.service';
+import { WppCreateDto } from './dtos/wpp-create.dto';
+import { WppTemplatesResponseDto } from './dtos/wpp-template-response.dto';
+import { WppTemplateDto } from './dtos/wpp-template.dto';
 
 @Injectable()
-export class FacebookService {
+export class WppService {
   constructor(
-    private repository: FacebookRepository,
+    private repository: WppRepository,
     private readonly httpService: HttpService,
     private notificationService: NotificationService,
   ) {}
 
-  async create(body: FacebookCreateDto, userId: string): Promise<Facebook> {
+  async create(body: WppCreateDto, userId: string): Promise<Wpp> {
     try {
       const cryptToken = encrypt(body.token);
-      const facebook: Facebook = await this.repository.create(
+      const wpp: Wpp = await this.repository.create(
         { ...body, token: cryptToken },
         userId,
       );
-      return facebook;
+      return wpp;
     } catch (error: any) {
       throw error;
     }
   }
 
-  async getTemplates(userId: string): Promise<FacebookTemplatesDto> {
+  async getTemplates(userId: string): Promise<WppTemplatesResponseDto> {
     try {
-      const facebook: Facebook = await this.repository.findByUser(userId);
+      const wpp: Wpp = await this.repository.findByUser(userId);
 
-      if (!facebook) {
+      if (!wpp) {
         throw new NotFoundException(
-          'Facebook Cloud API account for this user is not found, please create a account!',
+          'Whatsapp Cloud API account for this user is not found, please create a account!',
         );
       }
 
-      const decryptToken = decrypt(facebook.token);
+      const decryptToken = decrypt(wpp.token);
 
       const response = await firstValueFrom(
-        this.httpService.get<FacebookTemplatesDto>(
-          `https://graph.facebook.com/v22.0/${facebook.businessPhone}/message_templates`,
+        this.httpService.get<WppTemplatesResponseDto>(
+          `https://graph.facebook.com/v22.0/${wpp.businessPhone}/message_templates`,
           {
             headers: {
               Authorization: `Bearer ${decryptToken}`,
@@ -62,21 +62,21 @@ export class FacebookService {
     }
   }
 
-  async sendTemplate(body: FacebookWppDto, userId: string): Promise<any> {
+  async sendTemplate(body: WppTemplateDto, userId: string): Promise<any> {
     try {
-      const facebook: Facebook = await this.repository.findByUser(userId);
+      const wpp: Wpp = await this.repository.findByUser(userId);
 
-      if (!facebook) {
+      if (!wpp) {
         throw new NotFoundException(
-          'Facebook Cloud API account for this user is not found, please create a account!',
+          'Whatsapp Cloud API account for this user is not found, please create a account!',
         );
       }
 
-      const decryptToken = decrypt(facebook.token);
+      const decryptToken = decrypt(wpp.token);
 
       const response = await firstValueFrom(
         this.httpService.post(
-          `https://graph.facebook.com/v22.0/${facebook.businessPhone}/messages`,
+          `https://graph.facebook.com/v22.0/${wpp.businessPhone}/messages`,
           {
             messaging_product: 'whatsapp',
             recipient_type: 'individual',

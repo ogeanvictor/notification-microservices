@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class FacebookCreateDto {
+export class WppCreateDto {
   @IsNotEmpty()
   businessPhone: string;
 

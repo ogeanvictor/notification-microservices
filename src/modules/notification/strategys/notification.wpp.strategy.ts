@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { FacebookService } from 'src/modules/facebook/facebook.service';
+import { WppService } from 'src/modules/wpp/wpp.service';
 import { NotificationStrategyInterface } from '../interfaces/notification.strategy.interface';
 
 @Injectable()
 export class NotificationWppStrategy implements NotificationStrategyInterface {
-  constructor(private facebookService: FacebookService) {}
+  constructor(private wppService: WppService) {}
 
   async send(notification: any, userId: string): Promise<void> {
-    await this.facebookService.sendTemplate(notification, userId);
+    await this.wppService.sendTemplate(notification, userId);
   }
 }

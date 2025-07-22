@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Facebook {
+export class Wpp {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,7 +20,7 @@ export class Facebook {
   @Column({ type: 'varchar' })
   token: string;
 
-  @OneToOne(() => User, (user) => user.facebook)
+  @OneToOne(() => User, (user) => user.wpp)
   @JoinColumn()
   user: User;
 
