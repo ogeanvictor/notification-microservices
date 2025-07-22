@@ -1,5 +1,5 @@
 import { IsArray, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
-import { NotificationChannel } from 'src/modules/notification/entities/notification-channel.enum';
+
 import { NotificationPriority } from 'src/modules/notification/entities/notification-priority.enum';
 
 interface Recipient {
@@ -8,10 +8,6 @@ interface Recipient {
 }
 
 export class BrevoEmailDto {
-  @IsNotEmpty()
-  @IsEnum(NotificationChannel)
-  channel: NotificationChannel;
-
   @IsNotEmpty()
   @IsArray()
   recipients: Recipient[];

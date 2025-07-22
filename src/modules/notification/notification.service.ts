@@ -75,7 +75,7 @@ export class NotificationService {
   }
 
   async create(
-    body: NotificationCreateDto | BrevoSmsDto,
+    body: NotificationCreateDto,
     userId: string,
   ): Promise<Notification> {
     try {

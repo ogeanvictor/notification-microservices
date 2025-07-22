@@ -10,11 +10,12 @@ import { Brevo } from './entities/brevo.entity';
 import { BrevoRepository } from './brevo.repository';
 import { encrypt, decrypt } from '../../common/utils/cryptKey';
 import { NotificationService } from '../notification/notification.service';
+import { User } from '../user/entities/user.entity';
+import { UserRepository } from '../user/user.repository';
+import { NotificationChannel } from '../notification/entities/notification-channel.enum';
 
 import { BrevoCreateDto } from './dtos/brevo-create.dto';
 import { BrevoSmsDto } from './dtos/brevo-sms.dto';
-import { User } from '../user/entities/user.entity';
-import { UserRepository } from '../user/user.repository';
 import { BrevoEmailDto } from './dtos/brevo-email.dto';
 
 @Injectable()
@@ -78,6 +79,7 @@ export class BrevoService {
       await this.notificationService.create(
         {
           ...body,
+          channel: NotificationChannel.EMAIL,
           recipients: body.recipients.map((recipient) => recipient.email),
         },
         userId,
@@ -104,7 +106,10 @@ export class BrevoService {
       const brevoApi = this.buildBrevoSmsInstance(brevoUserInstance.apiKey);
       const smsObject = this.createSmsObject(body, user);
 
-      await this.notificationService.create(body, userId);
+      await this.notificationService.create(
+        { ...body, channel: NotificationChannel.SMS },
+        userId,
+      );
       await brevoApi.sendTransacSms(smsObject);
     } catch (error: any) {
       throw error;

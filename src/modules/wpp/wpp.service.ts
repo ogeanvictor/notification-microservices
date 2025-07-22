@@ -7,6 +7,7 @@ import { Wpp } from './entities/Wpp.entity';
 import { WppRepository } from './wpp.repository';
 import { NotificationService } from '../notification/notification.service';
 import { decrypt, encrypt } from 'src/common/utils/cryptKey';
+import { NotificationChannel } from '../notification/entities/notification-channel.enum';
 
 import { WppCreateDto } from './dtos/wpp-create.dto';
 import { WppTemplatesResponseDto } from './dtos/wpp-template-response.dto';
@@ -100,7 +101,7 @@ export class WppService {
 
       await this.notificationService.create(
         {
-          channel: body.channel,
+          channel: NotificationChannel.WPP,
           recipients: [body.to],
           priority: body.priority,
           data: JSON.stringify(body.components),

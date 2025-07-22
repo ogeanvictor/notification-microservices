@@ -1,6 +1,5 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
 
-import { NotificationChannel } from 'src/modules/notification/entities/notification-channel.enum';
 import { NotificationPriority } from 'src/modules/notification/entities/notification-priority.enum';
 
 export class CurrencyParameter {
@@ -33,10 +32,6 @@ export class TemplateComponent {
 }
 
 export class WppTemplateDto {
-  @IsNotEmpty()
-  @IsEnum(NotificationChannel)
-  channel: NotificationChannel;
-
   @IsNotEmpty()
   to: string;
 
