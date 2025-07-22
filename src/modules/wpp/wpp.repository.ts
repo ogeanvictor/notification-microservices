@@ -23,6 +23,7 @@ export class WppRepository implements WppRepositoryInterface {
 
     const wpp = new Wpp();
     wpp.businessPhone = body.businessPhone;
+    wpp.phoneId = body.phoneId;
     wpp.token = body.token;
     wpp.user = user;
 

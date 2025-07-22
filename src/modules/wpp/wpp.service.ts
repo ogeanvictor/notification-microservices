@@ -77,7 +77,7 @@ export class WppService {
 
       const response = await firstValueFrom(
         this.httpService.post(
-          `https://graph.facebook.com/v22.0/${wpp.businessPhone}/messages`,
+          `https://graph.facebook.com/v22.0/${wpp.phoneId}/messages`,
           {
             messaging_product: 'whatsapp',
             recipient_type: 'individual',

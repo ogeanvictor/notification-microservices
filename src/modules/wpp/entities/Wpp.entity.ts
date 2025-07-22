@@ -17,6 +17,9 @@ export class Wpp {
   @Column({ type: 'varchar', unique: true })
   businessPhone: string;
 
+  @Column({ type: 'varchar', unique: true })
+  phoneId: string;
+
   @Column({ type: 'varchar' })
   token: string;
 

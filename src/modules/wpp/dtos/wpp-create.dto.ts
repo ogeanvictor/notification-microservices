@@ -5,5 +5,8 @@ export class WppCreateDto {
   businessPhone: string;
 
   @IsNotEmpty()
+  phoneId: string;
+
+  @IsNotEmpty()
   token: string;
 }
