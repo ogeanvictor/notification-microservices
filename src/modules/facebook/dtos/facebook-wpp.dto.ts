@@ -1,4 +1,6 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { NotificationChannel } from 'src/modules/notification/entities/notification-channel.enum';
+import { NotificationPriority } from 'src/modules/notification/entities/notification-priority.enum';
 
 export class CurrencyParameter {
   fallback_value: string;
@@ -31,6 +33,10 @@ export class TemplateComponent {
 
 export class FacebookWppDto {
   @IsNotEmpty()
+  @IsEnum(NotificationChannel)
+  channel: NotificationChannel;
+
+  @IsNotEmpty()
   to: string;
 
   @IsNotEmpty()
@@ -41,4 +47,8 @@ export class FacebookWppDto {
 
   @IsNotEmpty()
   components: TemplateComponent[];
+
+  @IsNotEmpty()
+  @IsEnum(NotificationPriority)
+  priority: NotificationPriority;
 }

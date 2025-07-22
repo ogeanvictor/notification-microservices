@@ -9,6 +9,7 @@ import { Notification } from './entities/notification.entity';
 
 import { BrevoEmailDto } from '../brevo/dtos/brevo-email.dto';
 import { BrevoSmsDto } from '../brevo/dtos/brevo-sms.dto';
+import { FacebookWppDto } from '../facebook/dtos/facebook-wpp.dto';
 
 @Controller('notifications')
 export class NotificationController {
@@ -46,5 +47,15 @@ export class NotificationController {
     const user = req.user as { id: string };
     await this.service.publishNotification(body, user.id);
     return 'Sms notification queued!';
+  }
+
+  @Post('/sendWpp')
+  async sendWpp(
+    @Body() body: FacebookWppDto,
+    @Req() req: Request,
+  ): Promise<string> {
+    const user = req.user as { id: string };
+    await this.service.publishNotification(body, user.id);
+    return 'Wpp notification queued!';
   }
 }

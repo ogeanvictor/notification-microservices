@@ -10,12 +10,14 @@ import { decrypt, encrypt } from 'src/common/utils/cryptKey';
 import { FacebookCreateDto } from './dtos/facebook-create.dto';
 import { FacebookTemplatesDto } from './dtos/facebook-templates.dto';
 import { FacebookWppDto } from './dtos/facebook-wpp.dto';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class FacebookService {
   constructor(
     private repository: FacebookRepository,
     private readonly httpService: HttpService,
+    private notificationService: NotificationService,
   ) {}
 
   async create(body: FacebookCreateDto, userId: string): Promise<Facebook> {
@@ -94,6 +96,18 @@ export class FacebookService {
             },
           },
         ),
+      );
+
+      await this.notificationService.create(
+        {
+          channel: body.channel,
+          recipients: [body.to],
+          priority: body.priority,
+          data: JSON.stringify(body.components),
+          message: body.template,
+          subject: body.template,
+        },
+        userId,
       );
 
       return response.data;
