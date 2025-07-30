@@ -2,6 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import * as BrevoInstance from '@getbrevo/brevo';
@@ -27,6 +28,8 @@ export class BrevoService {
     private notificationService: NotificationService,
   ) {}
 
+  private readonly logger = new Logger(BrevoService.name);
+
   async create(body: BrevoCreateDto, userId: string): Promise<Brevo> {
     try {
       const cryptKey = encrypt(body.apiKey);
@@ -36,6 +39,7 @@ export class BrevoService {
       );
       return brevo;
     } catch (error: any) {
+      this.logger.error(`Create Brevo instance error: ${error}`);
       throw error;
     }
   }
@@ -86,6 +90,7 @@ export class BrevoService {
       );
       await brevoApi.sendTransacEmail(emailObject);
     } catch (error: any) {
+      this.logger.error(`Send Email error: ${error}`);
       throw error;
     }
   }
@@ -112,6 +117,7 @@ export class BrevoService {
       );
       await brevoApi.sendTransacSms(smsObject);
     } catch (error: any) {
+      this.logger.error(`Send Sms error: ${error}`);
       throw error;
     }
   }

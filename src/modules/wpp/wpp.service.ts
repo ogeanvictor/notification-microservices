@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
@@ -21,6 +21,8 @@ export class WppService {
     private notificationService: NotificationService,
   ) {}
 
+  private readonly logger = new Logger(WppService.name);
+
   async create(body: WppCreateDto, userId: string): Promise<Wpp> {
     try {
       const cryptToken = encrypt(body.token);
@@ -30,6 +32,7 @@ export class WppService {
       );
       return wpp;
     } catch (error: any) {
+      this.logger.error(`Create Wpp Instance error: ${error}`);
       throw error;
     }
   }
@@ -59,6 +62,7 @@ export class WppService {
 
       return response.data;
     } catch (error: any) {
+      this.logger.error(`Get Whatsapp Templates error: ${error}`);
       throw error;
     }
   }
@@ -113,6 +117,7 @@ export class WppService {
 
       return response.data;
     } catch (error: any) {
+      this.logger.error(`Send Whatsapp Template error: ${error}`);
       throw error;
     }
   }
