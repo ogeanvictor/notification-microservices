@@ -6,12 +6,14 @@ import { WinstonModule } from 'nest-winston';
 
 import { AppModule } from './app.module';
 import { winstonConfig } from './common/utils/logger.config';
+import { LoggingInterceptor } from './common/interceptors/logger.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger(winstonConfig),
   });
   app.enableCors();
+  app.useGlobalInterceptors(app.get(LoggingInterceptor));
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   app.connectMicroservice<MicroserviceOptions>({
