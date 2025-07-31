@@ -7,6 +7,7 @@ import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { winstonConfig } from './common/utils/logger.config';
 import { LoggingInterceptor } from './common/interceptors/logger.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -15,6 +16,23 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalInterceptors(app.get(LoggingInterceptor));
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  const config = new DocumentBuilder()
+    .setTitle('Notification Microservice')
+    .setDescription('The notification microservice API documentation')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'access-token',
+    )
+    .build();
+
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
