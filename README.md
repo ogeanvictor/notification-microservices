@@ -75,13 +75,19 @@ cd notification-service
 
 ### 2. Instalar dependências
 
+```bash
 yarn install
+```
 
 ### 3. Criar arquivo .env
 
-JWT_SECRET="sua_chave_jwt"
+```bash
+JWT_SECRET=sua_chave_jwt
 ENCRYPTION_SECRET="encryption_key"
+```
 
 ### 5. Execute o projeto
 
+```bash
 yarn start:dev
+```
